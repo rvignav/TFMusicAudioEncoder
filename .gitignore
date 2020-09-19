@@ -1,7 +1,4 @@
-audio/
-audio.zip
-audio_wav
-
+audio*
 
 # Created by https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,windows,python
 # Edit at https://www.toptal.com/developers/gitignore?templates=visualstudiocode,macos,windows,python

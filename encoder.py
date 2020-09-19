@@ -28,7 +28,7 @@ epochs = 1
 batch_size = 50
 
 # Change the batches variable to change the number of batches you want per epoch
-batches = 1
+batches = 10
 
 # Define our placeholder with shape [?, 12348]
 X = tf.placeholder(tf.float32, shape=[None, inputs])
