@@ -6,9 +6,9 @@ from functools import partial
 
 
 LOSS_OUT_FILE = 'Epoch_Loss.txt'
-
-process_data.process_wav()
-
+print("before process_data")
+# process_data.process_wav()
+print("after process_data")
 # Learning rate
 lr = 0.0001
 
@@ -22,7 +22,7 @@ hidden_3_size = 2800
 
 # Change the epochs variable to define the 
 # number of times we iterate through all our batches
-epochs = 1000
+epochs = 1
 
 # Change the batch_size variable to define how many songs to load per batch
 batch_size = 50
