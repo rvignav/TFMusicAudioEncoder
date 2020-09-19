@@ -7,7 +7,7 @@ from functools import partial
 
 LOSS_OUT_FILE = 'Epoch_Loss.txt'
 print("before process_data")
-# process_data.process_wav()
+process_data.process_wav()
 print("after process_data")
 # Learning rate
 lr = 0.0001
@@ -28,7 +28,7 @@ epochs = 1
 batch_size = 50
 
 # Change the batches variable to change the number of batches you want per epoch
-batches = 10
+batches = 1
 
 # Define our placeholder with shape [?, 12348]
 X = tf.placeholder(tf.float32, shape=[None, inputs])
