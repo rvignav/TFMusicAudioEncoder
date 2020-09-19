@@ -21,6 +21,7 @@ def convert_mp3_to_wav():
 		index += 1
 
 def process_wav():
+	convert_mp3_to_wav()
 	file_range = 0
 	for file in iglob(DATA_FILES_WAV +'/*.wav'):
 		file_arr.append(file)
@@ -34,7 +35,11 @@ def get_next_batch(curr_batch, songs_per_batch, sess):
 	start_position = curr_batch * songs_per_batch
 	end_position = start_position + songs_per_batch
 	for idx in range(start_position, end_position):
-		audio_binary = tf.read_file(file_arr[idx])
+		try:
+			audio_binary = tf.read_file(file_arr[idx])
+		except:
+			print(file_arr)
+			exit(0)
 		wav_decoder = audio_ops.decode_wav(
 			audio_binary,
 			desired_channels=2)
