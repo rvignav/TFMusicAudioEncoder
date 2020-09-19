@@ -1,9 +1,10 @@
 # TFMusicAudioEncoder
 
 ## Setup
-1. Create empty folders named 'audio_wav' and 'output'
-2. Download `audio.zip` from https://zenodo.org/record/1101082#.X2XJrJNKjeS, unzip it, and add the folder to the repo.
-3. Open up your terminal within the folder and run `python3 encoder.py`
+1. Run `pip uninstall tensorflow` and `pip install tensorflow==1.5.0`.
+2. Create empty folders named 'audio_wav' and 'output'
+3. Download `audio.zip` from https://zenodo.org/record/1101082#.X2XJrJNKjeS, unzip it, and add the folder to the repo.
+4. Open up your terminal within the folder and run `python3 encoder.py`
 
 ## Tips
 - If you're only looking at a single batch of songs, it'd be wise to move the
