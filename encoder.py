@@ -1,3 +1,5 @@
+import os
+
 import process_data
 import math
 import tensorflow as tf
@@ -7,7 +9,7 @@ from functools import partial
 
 LOSS_OUT_FILE = 'Epoch_Loss.txt'
 print("before process_data")
-# process_data.process_wav()
+process_data.process_wav()
 print("after process_data")
 # Learning rate
 lr = 0.0001
@@ -28,7 +30,10 @@ epochs = 1
 batch_size = 50
 
 # Change the batches variable to change the number of batches you want per epoch
-batches = 1
+batches = 1  # floor(training_size=1486 / batch_size=50)
+
+checkpoint_directory = "output/training_checkpoints"
+checkpoint_prefix = os.path.join(checkpoint_directory, "ckpt")
 
 # Define our placeholder with shape [?, 12348]
 X = tf.placeholder(tf.float32, shape=[None, inputs])
@@ -72,9 +77,13 @@ def next_batch(c_batch, batch_size, sess):
     return np.array(ch1_arr), np.array(ch2_arr), sample_rate
 
 
+checkpoint = tf.train.Checkpoint(optimizer=optimizer, model=model)
+status = checkpoint.restore(tf.train.latest_checkpoint(checkpoint_directory))
+
 # Run training
 with tf.Session() as sess:
-    init.run()
+    # init.run()
+    status.initialize_or_restore(sess)
 
     for epoch in range(epochs):
         epoch_loss = []
@@ -122,7 +131,4 @@ with tf.Session() as sess:
             process_data.save_to_wav(full_song_ch1, full_song_ch2, sample_rate, orig_song_ch1, orig_song_ch2, epoch,
                                      'output', sess)
 
-    onnx_graph = tf2onnx.tfonnx.process_tf_graph(sess.graph, input_names=["input:0"], output_names=["output:0"])
-    model_proto = onnx_graph.make_model("test")
-    with open("output/model.onnx", "wb") as f:
-        f.write(model_proto.SerializeToString())
+    tf.saved_model.save(model, "")
