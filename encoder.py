@@ -31,21 +31,21 @@ batch_size = 50
 batches = 29  # floor(training_size=1486 / batch_size=50)
 
 resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu='hackmit-290008')
-tf.compat.v2.config.experimental_connect_to_host(resolver)
+tf.config.experimental_connect_to_cluster(resolver)
 # This is the TPU initialization code that has to be at the beginning.
 tf.tpu.experimental.initialize_tpu_system(resolver)
-print(f"All devices: {tf.compat.v2.config.experimental_list_devices('TPU')}")
+print("All devices: ", tf.config.list_logical_devices('TPU'))
 
-strategy = tf.compat.v2.distribute.experimental.TPUStrategy(resolver)
+strategy = tf.distribute.experimental.TPUStrategy(resolver)
 
 # Define our placeholder with shape [?, 12348]
-X = tf.placeholder(tf.float32, shape=[None, inputs])
-l2_regularizer = tf.contrib.layers.l2_regularizer(l2)
+X = tf.compat.v1.placeholder(tf.float32, shape=[None, inputs])
+l2_regularizer = tf.keras.regularizers.l2(0.5 * l2)
 
-autoencoder_dnn = partial(tf.layers.dense,
+autoencoder_dnn = partial(tf.compat.v1.layers.dense,
                           activation=tf.nn.elu,
-                          kernel_initializer=tf.contrib.layers.variance_scaling_initializer(),
-                          kernel_regularizer=tf.contrib.layers.l2_regularizer(l2))
+                          kernel_initializer=tf.compat.v1.keras.initializers.VarianceScaling(scale=2.0),
+                          kernel_regularizer=tf.keras.regularizers.l2(0.5 * l2))
 
 hidden_1 = autoencoder_dnn(X, hidden_1_size)
 hidden_2 = autoencoder_dnn(hidden_1, hidden_2_size)
@@ -53,13 +53,13 @@ hidden_4 = autoencoder_dnn(hidden_2, hidden_3_size)
 hidden_5 = autoencoder_dnn(hidden_4, hidden_2_size)
 outputs = autoencoder_dnn(hidden_5, inputs, activation=None)
 
-reconstruction_loss = tf.reduce_mean(tf.square(outputs - X))
-reg_loss = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+reconstruction_loss = tf.reduce_mean(input_tensor=tf.square(outputs - X))
+reg_loss = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.REGULARIZATION_LOSSES)
 loss = tf.add_n([reconstruction_loss] + reg_loss)
 
-optimizer = tf.train.AdamOptimizer(lr)
+optimizer = tf.compat.v1.train.AdamOptimizer(lr)
 training_op = optimizer.minimize(loss)
-init = tf.global_variables_initializer()
+init = tf.compat.v1.global_variables_initializer()
 
 
 def next_batch(c_batch, batch_size, sess):
@@ -80,9 +80,9 @@ def next_batch(c_batch, batch_size, sess):
     return np.array(ch1_arr), np.array(ch2_arr), sample_rate
 
 
-saver = tf.train.Saver(keep_checkpoint_every_n_hours=1)
+saver = tf.compat.v1.train.Saver(keep_checkpoint_every_n_hours=0.5)
 # Run training
-with tf.Session() as sess:
+with tf.compat.v1.Session() as sess:
     init.run()
 
     for epoch in range(epochs):
