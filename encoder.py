@@ -2,6 +2,7 @@ import process_data
 import math
 import tensorflow as tf
 import numpy as np
+import tf2onnx
 from functools import partial
 
 
@@ -120,3 +121,7 @@ with tf.Session() as sess:
 			# Save both the untouched song and reconstructed song to the 'output' folder
 			process_data.save_to_wav(full_song_ch1, full_song_ch2, sample_rate, orig_song_ch1, orig_song_ch2, epoch, 'output', sess)
 
+	onnx_graph = tf2onnx.tfonnx.process_tf_graph(sess.graph, input_names=["input:0"], output_names=["output:0"])
+	model_proto = onnx_graph.make_model("test")
+	with open("output/model.onnx", "wb") as f:
+		f.write(model_proto.SerializeToString())
