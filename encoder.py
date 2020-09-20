@@ -22,13 +22,17 @@ hidden_3_size = 2800
 
 # Change the epochs variable to define the 
 # number of times we iterate through all our batches
-epochs = 1
+epochs = 50
 
 # Change the batch_size variable to define how many songs to load per batch
 batch_size = 50
 
 # Change the batches variable to change the number of batches you want per epoch
 batches = 29  # floor(training_size=1486 / batch_size=50)
+
+resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu='hackmit-290008')
+# This is the TPU initialization code that has to be at the beginning.
+tf.tpu.experimental.initialize_tpu_system(resolver)
 
 # Define our placeholder with shape [?, 12348]
 X = tf.placeholder(tf.float32, shape=[None, inputs])
@@ -72,7 +76,7 @@ def next_batch(c_batch, batch_size, sess):
     return np.array(ch1_arr), np.array(ch2_arr), sample_rate
 
 
-saver = tf.train.Saver(keep_checkpoint_every_n_hours=2)
+saver = tf.train.Saver(keep_checkpoint_every_n_hours=1)
 # Run training
 with tf.Session() as sess:
     init.run()
