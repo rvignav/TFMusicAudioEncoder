@@ -1,10 +1,10 @@
-import os
+import math
+from functools import partial
+
+import numpy as np
+import tensorflow as tf
 
 import process_data
-import math
-import tensorflow as tf
-import numpy as np
-from functools import partial
 
 print("before process_data")
 # process_data.process_wav()
@@ -75,8 +75,7 @@ def next_batch(c_batch, batch_size, sess):
 saver = tf.train.Saver(keep_checkpoint_every_n_hours=2)
 # Run training
 with tf.Session() as sess:
-    # init.run()
-    status.initialize_or_restore(sess)
+    init.run()
 
     for epoch in range(epochs):
         epoch_loss = []
