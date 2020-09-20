@@ -4,7 +4,6 @@ import tensorflow as tf
 import numpy as np
 from functools import partial
 
-LOSS_OUT_FILE = 'Epoch_Loss.txt'
 print("before process_data")
 process_data.process_wav()
 print("after process_data")
@@ -71,6 +70,7 @@ def next_batch(c_batch, batch_size, sess):
     return np.array(ch1_arr), np.array(ch2_arr), sample_rate
 
 
+saver = tf.train.Saver(keep_checkpoint_every_n_hours=2)
 # Run training
 with tf.Session() as sess:
     init.run()
@@ -94,6 +94,9 @@ with tf.Session() as sess:
             epoch_loss.append(np.mean(batch_loss))
 
         print("Epoch Avg Loss: " + str(np.mean(epoch_loss)))
+
+        if epoch % 35 == 0:  # approx 1000 steps of Adam optimizer
+            saver.save(sess, 'rnn-vae', global_step=epoch)
 
         if epoch % 1000 == 0:
             ch1_song_new, ch2_song_new, sample_rate_new = next_batch(2, 1, sess)
@@ -120,9 +123,3 @@ with tf.Session() as sess:
             # Save both the untouched song and reconstructed song to the 'output' folder
             process_data.save_to_wav(full_song_ch1, full_song_ch2, sample_rate, orig_song_ch1, orig_song_ch2, epoch,
                                      'output', sess)
-
-    onnx_graph = tf2onnx.tfonnx.process_tf_graph(sess.graph, input_names=["input:0"], output_names=["output:0"])
-    model_proto = onnx_graph.make_model("test")
-    with open("output/model.onnx", "wb") as f:
-        f.write(model_proto.SerializeToString())
-    # tf.saved_model.save(model, "")
