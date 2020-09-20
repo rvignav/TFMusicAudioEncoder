@@ -7,7 +7,7 @@ from functools import partial
 
 LOSS_OUT_FILE = 'Epoch_Loss.txt'
 print("before process_data")
-process_data.process_wav()
+# process_data.process_wav()
 print("after process_data")
 # Learning rate
 lr = 0.0001
