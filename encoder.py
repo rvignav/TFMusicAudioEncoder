@@ -4,7 +4,6 @@ import process_data
 import math
 import tensorflow as tf
 import numpy as np
-import tf2onnx
 from functools import partial
 
 LOSS_OUT_FILE = 'Epoch_Loss.txt'
