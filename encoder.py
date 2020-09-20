@@ -7,7 +7,7 @@ import tensorflow as tf
 import process_data
 
 print("before process_data")
-# process_data.process_wav()
+process_data.process_wav()
 print("after process_data")
 # Learning rate
 lr = 0.0001
@@ -20,7 +20,7 @@ hidden_1_size = 8400
 hidden_2_size = 3440
 hidden_3_size = 2800
 
-# Change the epochs variable to define the 
+# Change the epochs variable to define the
 # number of times we iterate through all our batches
 epochs = 50
 
@@ -31,8 +31,12 @@ batch_size = 50
 batches = 29  # floor(training_size=1486 / batch_size=50)
 
 resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu='hackmit-290008')
+tf.compat.v2.config.experimental_connect_to_host(resolver)
 # This is the TPU initialization code that has to be at the beginning.
 tf.tpu.experimental.initialize_tpu_system(resolver)
+print(f"All devices: {tf.compat.v2.config.experimental_list_devices('TPU')}")
+
+strategy = tf.compat.v2.distribute.experimental.TPUStrategy(resolver)
 
 # Define our placeholder with shape [?, 12348]
 X = tf.placeholder(tf.float32, shape=[None, inputs])

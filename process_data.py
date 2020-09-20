@@ -1,4 +1,8 @@
 import math
+import os
+import sys
+import traceback
+
 import numpy as np
 import matplotlib.pyplot as plt
 import tensorflow as tf
@@ -26,8 +30,8 @@ def convert_mp3_to_wav():
 
 
 def process_wav():
-    convert_mp3_to_wav()
-    file_range = 0
+    if os.path.isfile(DATA_FILES_WAV):
+        convert_mp3_to_wav()
     for file in iglob(DATA_FILES_WAV + '/*.wav'):
         file_arr.append(file)
 
@@ -45,6 +49,10 @@ def get_next_batch(curr_batch, songs_per_batch, sess):
             audio_binary = tf.read_file(file_arr[idx])
         except:
             print(file_arr)
+            print("Exception in user code:")
+            print('-' * 60)
+            traceback.print_exc(file=sys.stdout)
+            print('-' * 60)
             exit(0)
         wav_decoder = audio_ops.decode_wav(
             audio_binary,
